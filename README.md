@@ -5,13 +5,6 @@ This role holds all custom modules
 
 Installation
 ------------
-Add the following lines to the requirements.yml in your roles subdirectory:
-<pre>
----
-- src: ssh://git@gitlab.ing.net:2222/ISS-PaaS/modules-role.git
-  scm: git
-...
-</pre>
 
 Install from your projects top directory with:
 <code>ansible-galaxy install -r roles/requirements.yml -p roles --force</code>
