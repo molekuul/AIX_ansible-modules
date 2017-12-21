@@ -1,0 +1,9 @@
+---
+# meta/main.yml must exist
+galaxy_info:
+  author: Joris Weijters
+  description: Common/Basic AIX role to hold all custom modules
+  min_ansible_version: 2.2
+  galaxy_tags: []
+dependencies: []
+...
