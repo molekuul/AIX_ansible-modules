@@ -131,7 +131,10 @@ changed:
 '''
 
 # Import necessary libraries
-import itertools
+try:
+    from itertools import izip as zip
+except ImportError: # for python 3 normal zip can be used
+    pass
 from ansible.module_utils.basic import AnsibleModule
 
 # end import modules
@@ -149,7 +152,7 @@ def check_current_entry(module):
         values = out.split(":")
         # strip non readable characters as \n
         values = map(lambda s: s.strip(), values)
-        existsdict = dict(itertools.izip(keys, values))
+        existsdict = dict(zip(keys, values))
         existsdict.update({'exist': True})
     return existsdict
 

@@ -167,6 +167,3 @@ aix_updata_all
 </pre>
 
 
-Author Information
-------------------
-ING / Infra / AIX squad
