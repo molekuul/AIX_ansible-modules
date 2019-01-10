@@ -289,8 +289,9 @@ def uninstall(module):
                 module.fail_json(
                     msg=msg, err=err, rc=rc)
             else:
+                list_filesets_removed = ' '.join(module.params['name'])
                 result['msg'] = result['msg'] + \
-                    " Fileset: " + fileset + " removed"
+                    " Fileset: " + list_filesets_removed + " removed"
                 result['changed'] = True
     return result
 
