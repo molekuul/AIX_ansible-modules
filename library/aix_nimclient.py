@@ -1,28 +1,15 @@
 #!/usr/bin/python
-
 # -*- coding: utf-8 -*-
 
-# (c) 2017, Joris Weijters <joris.weijters@gmail.com>
-#
-# This file is part of Ansible
-#
-# Ansible is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# Ansible is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with Ansible.  If not, see <http://www.gnu.org/licenses/>.
-#
-ANSIBLE_METADATA = {'status': ['preview'],
-                    'supported_by': 'community',
-                    'version': '1.0'}
+# Copyright: (c) 2017, Joris Weijters <joris.weijters@gmail.com>
+# GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
+from __future__ import absolute_import, division, print_function
+__metaclass__ = type
+
+ANSIBLE_METADATA = {'metadata_version': '1.1',
+                    'status': ['preview'],
+                    'supported_by': 'community'}
 
 DOCUMENTATION = '''
 ---
@@ -31,12 +18,13 @@ module: aix_nimclient
 short_description: installs software using the nimclient, and removes software
 description:
     - installs software at the nimclient using nimclient command and removes software using local commands also updates ALL to latest version
-version_added: "2.3"
+version_added: "2.8"
 options:
   name:
     description:
     - Name of the fileset to install or update_all to update all filesets to latest level
-    alias: filesets
+    aliases: 
+      - filesets
     type: list
   state:
     description:
@@ -52,15 +40,15 @@ options:
               reset
               ]
     default : present
-    type: string
+    type: str
   lpp_source:
     description:
     - Name of the lpp_source at the nimserver to be used for installation
-    type: string
+    type: str
   spot:
     description:
     - Name of the Spot at the nimserver
-    type: string
+    type: str
   commit:
     description:
     - boolean for committing the fileset during install or not
@@ -69,8 +57,8 @@ options:
   installp_flags:
     description:
     - installp flags
-    type: string
-    default:'acgwXY'
+    type: str
+    default: 'acgwXY'
 
 notes:
   - The changes are persistent across reboots.
@@ -101,15 +89,15 @@ EXAMPLES = '''
 
 - name: remove fileset OpenGL.OpenGL_X.rte.soft
   aix_nimclient:
-  name:
-    - OpenGL.OpenGL_X.rte.soft
-  state: absent
+    name:
+      - OpenGL.OpenGL_X.rte.soft
+    state: absent
 
 - name: commit fileset OpenGL.OpenGL_X.rte.soft
   aix_nimclient:
-  name:
-    - OpenGL.OpenGL_X.rte.soft
-  state: commit
+    name:
+      - OpenGL.OpenGL_X.rte.soft
+    state: commit
 
 # install all filesets to latest level f.i. install a TL or ML
 - name: update all filesets to latest level from lpp_source lppsource_aix6109-06
@@ -177,6 +165,7 @@ def _check_fileset_installed(module, filesetname):
         module.fail_json(
             msg=msg, err=msg, rc=rc)
     return res
+
 
 def _check_fileset_install_state(module, filesetname):
     reqcmd = "/usr/bin/lslpp -Lcq " + filesetname
@@ -384,7 +373,7 @@ def install(module):
                     line = line.rstrip()
                     if re.search(
                             '@@[A-Z]:', line):  # only all lines with @@ in the line
-                        if not "ALL" in line:
+                        if "ALL" not in line:
                             restline = line.split('@@')
                             filesettype = restline[1].split(':')[0]  # find the fileset type ( R = RPM , I/S = LPP )
                             fs, ver = restline[1].split(':')[1].split()
@@ -397,7 +386,7 @@ def install(module):
                             else:
                                 fsversion_in_lppsource[fs] = ver
 
-                if not filesetname in fsversion_in_lppsource.keys():
+                if filesetname not in fsversion_in_lppsource.keys():
                     msg = "ERROR: fileset: " + fileset + \
                         " is not avalable in LPP_SOURCE: " + module.params['lpp_source']
                     module.fail_json(
@@ -441,7 +430,6 @@ def install(module):
             result['msg'] = "SUCCESS: filesets: " + \
                 list_filesets_to_install_str + " installed"
         else:
-#            msg = "ERROR: installing filesets: " + list_filesets_to_install_str + " Failed" + cmd
             msg = ("ERROR: installing filesets: " +
                    list_filesets_to_install_str + " Failed. Command used: " +
                    cmd)
